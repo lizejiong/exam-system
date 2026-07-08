@@ -1,17 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { UserService } from './user.service';
-import { RedisService } from '@app/redis';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Controller()
 export class UserController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly redisService: RedisService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
-  @Get()
-  async getHello() {
-    const keys = await this.redisService.keys('*');
-    return this.userService.getHello() + keys;
+  @Post('register')
+  async register(@Body() registerUser: RegisterUserDto) {
+    return await this.userService.create(registerUser);
   }
 }

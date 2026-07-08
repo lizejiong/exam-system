@@ -12,7 +12,9 @@ export class AnswerController {
 
   @Get()
   async getHello() {
-    const value = await firstValueFrom(this.examClient.send('sum', [1, 3, 5]));
+    const value = await firstValueFrom(
+      this.examClient.send<number>('sum', [1, 3, 5]),
+    );
     return this.answerService.getHello() + ' ' + value;
   }
 }
