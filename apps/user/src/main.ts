@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { UserModule } from './user.module';
 import { ValidationPipe } from '@nestjs/common';
