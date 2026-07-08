@@ -4,6 +4,7 @@ import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { EmailService } from '@app/email';
 import { LoginUserDto } from './dto/login-user.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class UserService {
@@ -11,6 +12,7 @@ export class UserService {
     private readonly prismaService: PrismaService,
     private readonly redisService: RedisService,
     private readonly emailService: EmailService,
+    private readonly jwtService: JwtService,
   ) {}
 
   private logger = new Logger();
@@ -82,7 +84,14 @@ export class UserService {
       throw new HttpException('密码错误', HttpStatus.BAD_REQUEST);
     }
 
-    const { password, ...safeUser } = foundUser;
-    return safeUser;
+    const { password, ...user } = foundUser;
+
+    return {
+      user,
+      token: this.jwtService.sign({
+        userId: user.id,
+        username: user.username,
+      }),
+    };
   }
 }
