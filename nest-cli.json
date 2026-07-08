@@ -28,6 +28,15 @@
         "tsConfigPath": "apps/answer/tsconfig.app.json"
       }
     },
+    "email": {
+      "type": "library",
+      "root": "libs/email",
+      "entryFile": "index",
+      "sourceRoot": "libs/email/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/email/tsconfig.lib.json"
+      }
+    },
     "exam": {
       "type": "application",
       "root": "apps/exam",
