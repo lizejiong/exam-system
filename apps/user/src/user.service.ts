@@ -1,10 +1,17 @@
 import { PrismaService } from '@app/prisma';
 import { RedisService } from '@app/redis';
-import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  Logger,
+} from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { EmailService } from '@app/email';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
+import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
 
 @Injectable()
 export class UserService {
@@ -69,6 +76,28 @@ export class UserService {
     return captcha;
   }
 
+  async generateUpdatePasswordCaptcha(address: string) {
+    if (!address) {
+      throw new BadRequestException('邮箱地址不能为空');
+    }
+
+    const code = Math.random().toString().slice(2, 8);
+
+    await this.redisService.set(
+      `update_password_captcha_${address}`,
+      code,
+      10 * 60,
+    );
+
+    await this.emailService.sendMail({
+      to: address,
+      subject: '更改密码验证码',
+      html: `<p>你的更改密码验证码是 ${code}</p>`,
+    });
+
+    return code;
+  }
+
   async login(loginUserDto: LoginUserDto) {
     const foundUser = await this.prismaService.user.findUnique({
       where: {
@@ -93,5 +122,40 @@ export class UserService {
         username: user.username,
       }),
     };
+  }
+
+  async updatePassword(passwordDto: UpdateUserPasswordDto) {
+    const captcha = await this.redisService.get(
+      `update_password_captcha_${passwordDto.email}`,
+    );
+
+    if (!captcha) {
+      throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
+    }
+
+    if (passwordDto.captcha !== captcha) {
+      throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
+    }
+
+    const foundUser = await this.prismaService.user.findUnique({
+      where: {
+        username: passwordDto.username,
+      },
+    });
+
+    foundUser.password = passwordDto.password;
+
+    try {
+      await this.prismaService.user.update({
+        where: {
+          id: foundUser.id,
+        },
+        data: foundUser,
+      });
+      return '密码修改成功';
+    } catch (e) {
+      this.logger.error(e, UserService);
+      return '密码修改失败';
+    }
   }
 }
