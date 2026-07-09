@@ -1,6 +1,6 @@
 :root {
-  --primary: #4f46e5;
-  --primary-hover: #4338ca;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
   --danger: #ef4444;
   --bg: #f5f6fa;
   --card: #ffffff;
@@ -32,9 +32,11 @@ button {
   color: #fff;
   transition: background 0.15s;
 }
+
 button:hover {
   background: var(--primary-hover);
 }
+
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -48,6 +50,7 @@ input {
   width: 100%;
   outline: none;
 }
+
 input:focus {
   border-color: var(--primary);
 }
@@ -58,7 +61,6 @@ input:focus {
   text-align: center;
 }
 
-/* 登录/注册页 */
 .login-page {
   min-height: 100vh;
   display: flex;
@@ -66,9 +68,10 @@ input:focus {
   justify-content: center;
   padding: 16px;
 }
+
 .login-card {
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: var(--card);
   padding: 32px;
   border-radius: 12px;
@@ -77,24 +80,30 @@ input:focus {
   flex-direction: column;
   gap: 16px;
 }
+
 .login-card h1 {
   text-align: center;
   font-size: 22px;
   margin-bottom: 4px;
 }
+
 .tabs {
   display: flex;
   gap: 8px;
 }
+
 .tabs button {
   flex: 1;
+  padding: 8px;
   background: #eef2ff;
   color: var(--text-light);
 }
+
 .tabs button.active {
   background: var(--primary);
   color: #fff;
 }
+
 .login-card label {
   display: flex;
   flex-direction: column;
@@ -102,35 +111,53 @@ input:focus {
   font-size: 13px;
   color: var(--text-light);
 }
+
 .captcha-row {
   display: flex;
   gap: 8px;
 }
+
 .captcha-row input {
   flex: 1;
 }
+
 .captcha-row button {
   white-space: nowrap;
 }
+
 .login-card button[type='submit'] {
   margin-top: 4px;
 }
 
-/* 考试页 */
+.text-action {
+  align-self: center;
+  padding: 0;
+  background: transparent;
+  color: var(--primary);
+}
+
+.text-action:hover {
+  background: transparent;
+  color: var(--primary-hover);
+}
+
 .exam-page {
   max-width: 720px;
   margin: 0 auto;
   padding: 24px 16px;
 }
+
 .exam-page header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
 }
+
 .exam-page header h1 {
   font-size: 20px;
 }
+
 .user-bar {
   display: flex;
   align-items: center;
@@ -138,24 +165,29 @@ input:focus {
   font-size: 14px;
   color: var(--text-light);
 }
+
 .user-bar button {
   background: #e5e7eb;
   color: var(--text);
 }
+
 .add-form {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
 }
+
 .add-form input {
   flex: 1;
 }
+
 .exam-list {
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
+
 .exam-list li {
   background: var(--card);
   border: 1px solid var(--border);
@@ -165,14 +197,17 @@ input:focus {
   justify-content: space-between;
   align-items: center;
 }
+
 .exam-info {
   display: flex;
   align-items: center;
   gap: 12px;
 }
+
 .exam-name {
   font-weight: 500;
 }
+
 .badge {
   font-size: 12px;
   color: var(--primary);
@@ -181,14 +216,17 @@ input:focus {
   border-radius: 10px;
   font-style: normal;
 }
+
 .exam-info time {
   font-size: 12px;
   color: var(--text-light);
 }
+
 .exam-list .danger {
   background: #fee2e2;
   color: var(--danger);
 }
+
 .empty {
   text-align: center;
   color: var(--text-light);

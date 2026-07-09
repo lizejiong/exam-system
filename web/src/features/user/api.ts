@@ -1,5 +1,10 @@
 import { http } from '../../shared/request'
-import type { LoginParams, LoginResult, RegisterParams } from './types'
+import type {
+  LoginParams,
+  LoginResult,
+  RegisterParams,
+  UpdatePasswordParams,
+} from './types'
 
 export const userApi = {
   /** 发送注册验证码 */
@@ -11,4 +16,10 @@ export const userApi = {
 
   /** 登录，返回 { user, token } */
   login: (data: LoginParams) => http.post<LoginResult>('/user/login', data),
+
+  updatePasswordCaptcha: (address: string) =>
+    http.get<string>('/user/update_password/captcha', { address }),
+
+  updatePassword: (data: UpdatePasswordParams) =>
+    http.post<string>('/user/update_password', data),
 }

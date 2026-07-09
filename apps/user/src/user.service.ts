@@ -125,9 +125,8 @@ export class UserService {
   }
 
   async updatePassword(passwordDto: UpdateUserPasswordDto) {
-    const captcha = await this.redisService.get(
-      `update_password_captcha_${passwordDto.email}`,
-    );
+    const captchaKey = `update_password_captcha_${passwordDto.email}`;
+    const captcha = await this.redisService.get(captchaKey);
 
     if (!captcha) {
       throw new HttpException('验证码已失效', HttpStatus.BAD_REQUEST);
@@ -137,9 +136,10 @@ export class UserService {
       throw new HttpException('验证码不正确', HttpStatus.BAD_REQUEST);
     }
 
-    const foundUser = await this.prismaService.user.findUnique({
+    const foundUser = await this.prismaService.user.findFirst({
       where: {
         username: passwordDto.username,
+        email: passwordDto.email,
       },
     });
 
@@ -156,6 +156,7 @@ export class UserService {
           password: passwordDto.password,
         },
       });
+      await this.redisService.del(captchaKey);
       return '密码修改成功';
     } catch (e) {
       this.logger.error(e, UserService);

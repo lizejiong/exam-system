@@ -12,6 +12,13 @@ export interface RegisterParams {
   captcha: string
 }
 
+export interface UpdatePasswordParams {
+  username: string
+  password: string
+  email: string
+  captcha: string
+}
+
 export interface LoginResult {
   user: LoginUser
   token: string
