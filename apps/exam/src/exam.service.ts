@@ -32,7 +32,11 @@ export class ExamService {
             }
           : {
               createUserId: userId,
+              isDelete: false,
             },
+      orderBy: {
+        updateTime: 'desc',
+      },
     });
   }
 
@@ -48,12 +52,14 @@ export class ExamService {
     });
   }
 
-  async save(dto: ExamSaveDto) {
+  async save(userId: number, dto: ExamSaveDto) {
     return this.prismaService.exam.update({
       where: {
         id: dto.id,
+        createUserId: userId,
       },
       data: {
+        name: dto.name,
         content: dto.content,
       },
     });
@@ -67,6 +73,18 @@ export class ExamService {
       },
       data: {
         isPublish: true,
+      },
+    });
+  }
+
+  async unpublish(userId: number, id: number) {
+    return this.prismaService.exam.update({
+      where: {
+        id,
+        createUserId: userId,
+      },
+      data: {
+        isPublish: false,
       },
     });
   }

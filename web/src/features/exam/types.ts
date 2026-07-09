@@ -6,6 +6,7 @@ export interface Exam {
   isDelete: boolean
   isPublish: boolean
   createTime: string
+  updateTime: string
 }
 
 export interface ExamAddParams {
@@ -14,5 +15,6 @@ export interface ExamAddParams {
 
 export interface ExamSaveParams {
   id: number
+  name?: string
   content: string
 }

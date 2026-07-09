@@ -36,13 +36,19 @@ export class ExamController {
 
   @Post('save')
   @RequireLogin()
-  async save(@Body() dto: ExamSaveDto) {
-    return this.examService.save(dto);
+  async save(@UserInfo('userId') userId: number, @Body() dto: ExamSaveDto) {
+    return this.examService.save(userId, dto);
   }
 
   @Get('publish/:id')
   @RequireLogin()
   async publish(@UserInfo('userId') userId: number, @Param('id') id: string) {
     return this.examService.publish(userId, +id);
+  }
+
+  @Get('unpublish/:id')
+  @RequireLogin()
+  async unpublish(@UserInfo('userId') userId: number, @Param('id') id: string) {
+    return this.examService.unpublish(userId, +id);
   }
 }
