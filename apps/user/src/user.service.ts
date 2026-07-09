@@ -143,14 +143,18 @@ export class UserService {
       },
     });
 
-    foundUser.password = passwordDto.password;
+    if (!foundUser) {
+      throw new HttpException('鐢ㄦ埛涓嶅瓨鍦?', HttpStatus.BAD_REQUEST);
+    }
 
     try {
       await this.prismaService.user.update({
         where: {
           id: foundUser.id,
         },
-        data: foundUser,
+        data: {
+          password: passwordDto.password,
+        },
       });
       return '密码修改成功';
     } catch (e) {

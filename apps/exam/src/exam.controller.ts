@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ExamService } from './exam.service';
 import { RequireLogin, UserInfo } from '@app/common';
 import { ExamAddDto } from './dto/exam-add.dto';
