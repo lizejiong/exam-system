@@ -18,3 +18,14 @@ export interface ExamSaveParams {
   name?: string
   content: string
 }
+
+export type ExamQuestionType = 'radio' | 'checkbox' | 'blank'
+
+export interface ExamQuestion {
+  type: ExamQuestionType
+  question: string
+  options: string[]
+  score: number
+  answer: string | string[]
+  answerAnalyse: string
+}

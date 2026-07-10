@@ -9,9 +9,6 @@ export default function ExamPage() {
   const user = getUser()
   const [list, setList] = useState<Exam[]>([])
   const [name, setName] = useState('')
-  const [editingExam, setEditingExam] = useState<Exam | null>(null)
-  const [editName, setEditName] = useState('')
-  const [editContent, setEditContent] = useState('')
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -38,49 +35,9 @@ export default function ExamPage() {
       const exam = await examApi.add({ name: examName })
       setName('')
       await load()
-      openEditor(exam)
+      navigate(`/exam/${exam.id}/edit`, { state: { exam } })
     } catch (e) {
       setMsg(e instanceof Error ? e.message : '创建失败')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const openEditor = (exam: Exam) => {
-    setEditingExam(exam)
-    setEditName(exam.name)
-    setEditContent(exam.content)
-    setMsg('')
-  }
-
-  const closeEditor = () => {
-    setEditingExam(null)
-    setEditName('')
-    setEditContent('')
-  }
-
-  const onSave = async () => {
-    if (!editingExam) return
-
-    const nextName = editName.trim()
-    if (!nextName) {
-      setMsg('考试名称不能为空')
-      return
-    }
-
-    setLoading(true)
-    setMsg('')
-    try {
-      const saved = await examApi.save({
-        id: editingExam.id,
-        name: nextName,
-        content: editContent,
-      })
-      setEditingExam(saved)
-      await load()
-      setMsg('保存成功')
-    } catch (e) {
-      setMsg(e instanceof Error ? e.message : '保存失败')
     } finally {
       setLoading(false)
     }
@@ -110,7 +67,6 @@ export default function ExamPage() {
     setMsg('')
     try {
       await examApi.remove(exam.id)
-      if (editingExam?.id === exam.id) closeEditor()
       await load()
     } catch (e) {
       setMsg(e instanceof Error ? e.message : '删除失败')
@@ -148,90 +104,54 @@ export default function ExamPage() {
 
       {msg && <p className="msg">{msg}</p>}
 
-      <section className="exam-workspace">
-        <div className="exam-list-panel">
-          <div className="section-title">
-            <h2>考试列表</h2>
-            <span>{list.length} 个考试</span>
-          </div>
-
-          <ul className="exam-list">
-            {list.map((exam) => (
-              <li key={exam.id} className="exam-card">
-                <div className="exam-info">
-                  <div>
-                    <span className="exam-name">{exam.name}</span>
-                    <time>
-                      更新于 {new Date(exam.updateTime).toLocaleString()}
-                    </time>
-                  </div>
-                  <em className={exam.isPublish ? 'badge' : 'badge muted'}>
-                    {exam.isPublish ? '已发布' : '未发布'}
-                  </em>
-                </div>
-
-                <div className="exam-actions">
-                  <button type="button" onClick={() => openEditor(exam)}>
-                    编辑
-                  </button>
-                  <button type="button" onClick={() => onTogglePublish(exam)}>
-                    {exam.isPublish ? '取消发布' : '发布'}
-                  </button>
-                  <button
-                    type="button"
-                    className="danger"
-                    onClick={() => onDelete(exam)}
-                  >
-                    删除
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          {list.length === 0 && (
-            <div className="empty">暂无考试，先新建一个考试。</div>
-          )}
+      <section className="exam-list-panel">
+        <div className="section-title">
+          <h2>考试列表</h2>
+          <span>{list.length} 个考试</span>
         </div>
 
-        <aside className="editor-panel">
-          {editingExam ? (
-            <>
-              <div className="section-title">
-                <h2>编辑考试</h2>
-                <button type="button" onClick={closeEditor}>
-                  关闭
-                </button>
+        <ul className="exam-list">
+          {list.map((exam) => (
+            <li key={exam.id} className="exam-card">
+              <div className="exam-info">
+                <div>
+                  <span className="exam-name">{exam.name}</span>
+                  <time>
+                    更新于 {new Date(exam.updateTime).toLocaleString()}
+                  </time>
+                </div>
+                <em className={exam.isPublish ? 'badge' : 'badge muted'}>
+                  {exam.isPublish ? '已发布' : '未发布'}
+                </em>
               </div>
 
-              <label>
-                考试名称
-                <input
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                />
-              </label>
+              <div className="exam-actions">
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(`/exam/${exam.id}/edit`, { state: { exam } })
+                  }
+                >
+                  编辑
+                </button>
+                <button type="button" onClick={() => onTogglePublish(exam)}>
+                  {exam.isPublish ? '取消发布' : '发布'}
+                </button>
+                <button
+                  type="button"
+                  className="danger"
+                  onClick={() => onDelete(exam)}
+                >
+                  删除
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
 
-              <label>
-                考试内容
-                <textarea
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  placeholder="这里先填写考试说明或题目草稿，后续可以升级为题目编辑器。"
-                />
-              </label>
-
-              <button type="button" disabled={loading} onClick={onSave}>
-                {loading ? '保存中...' : '保存'}
-              </button>
-            </>
-          ) : (
-            <div className="editor-empty">
-              <h2>选择一个考试进行编辑</h2>
-              <p>新建考试后也会自动打开编辑区域。</p>
-            </div>
-          )}
-        </aside>
+        {list.length === 0 && (
+          <div className="empty">暂无考试，先新建一个考试。</div>
+        )}
       </section>
     </div>
   )

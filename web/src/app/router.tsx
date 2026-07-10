@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import type { ReactNode } from 'react'
 import { LoginPage } from '../features/user'
-import { ExamPage } from '../features/exam'
+import { ExamEditPage, ExamPage } from '../features/exam'
 import { isLoggedIn } from '../shared/auth'
 
 function Protected({ children }: { children: ReactNode }) {
@@ -12,6 +12,14 @@ export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/exam/:id/edit"
+        element={
+          <Protected>
+            <ExamEditPage />
+          </Protected>
+        }
+      />
       <Route
         path="/"
         element={

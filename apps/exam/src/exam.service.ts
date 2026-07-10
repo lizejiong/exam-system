@@ -59,7 +59,7 @@ export class ExamService {
         createUserId: userId,
       },
       data: {
-        name: dto.name,
+        ...(dto.name !== undefined ? { name: dto.name } : {}),
         content: dto.content,
       },
     });
@@ -85,6 +85,16 @@ export class ExamService {
       },
       data: {
         isPublish: false,
+      },
+    });
+  }
+
+  async find(userId: number, id: number) {
+    return this.prismaService.exam.findFirst({
+      where: {
+        id,
+        createUserId: userId,
+        isDelete: false,
       },
     });
   }

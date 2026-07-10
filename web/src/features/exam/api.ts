@@ -7,6 +7,8 @@ export const examApi = {
 
   add: (data: ExamAddParams) => http.post<Exam>('/exam/add', data),
 
+  find: (id: number) => http.get<Exam>(`/exam/find/${id}`),
+
   remove: (id: number) => http.delete<void>(`/exam/delete/${id}`),
 
   save: (data: ExamSaveParams) => http.post<Exam>('/exam/save', data),
