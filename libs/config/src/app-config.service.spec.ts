@@ -41,6 +41,20 @@ describe('AppConfigService', () => {
     expect(service.emailQueue).toBe('email_queue');
   });
 
+  it('builds local gateway targets from service ports', () => {
+    const service = createService({
+      USER_SERVICE_PORT: '4101',
+      EXAM_SERVICE_PORT: '4102',
+      ANSWER_SERVICE_PORT: '4103',
+      ANALYSE_SERVICE_PORT: '4104',
+    });
+
+    expect(service.userServiceUrl).toBe('http://localhost:4101');
+    expect(service.examServiceUrl).toBe('http://localhost:4102');
+    expect(service.answerServiceUrl).toBe('http://localhost:4103');
+    expect(service.analyseServiceUrl).toBe('http://localhost:4104');
+  });
+
   it('requires DATABASE_URL before Prisma starts', () => {
     const service = createService({});
 

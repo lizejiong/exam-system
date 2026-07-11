@@ -77,7 +77,17 @@ Important variables:
 - `EMAIL_QUEUE`: RabbitMQ queue used by async email messages
 - `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM`: email sender
 - `USER_SERVICE_PORT` / `EXAM_SERVICE_PORT` / `ANSWER_SERVICE_PORT` / `ANALYSE_SERVICE_PORT`: backend HTTP ports
+- `USER_SERVICE_URL` / `EXAM_SERVICE_URL` / `ANSWER_SERVICE_URL` / `ANALYSE_SERVICE_URL`: optional API Gateway upstream targets
 - `EXAM_TCP_PORT`: Exam microservice TCP port used by the answer service
+
+API Gateway flow:
+
+```txt
+web -> /api/user/**    -> exam-system gateway -> user service
+web -> /api/exam/**    -> exam-system gateway -> exam service
+web -> /api/answer/**  -> exam-system gateway -> answer service
+web -> /api/analyse/** -> exam-system gateway -> analyse service
+```
 
 Async email flow:
 
@@ -92,6 +102,7 @@ user service -> RabbitMQ email_queue -> notification service -> SMTP
 $ pnpm dev:all
 
 # start a single service
+$ pnpm dev:gateway
 $ pnpm dev:user
 $ pnpm dev:exam
 $ pnpm dev:answer

@@ -65,16 +65,32 @@ export class AppConfigService {
     return this.getNumber('USER_SERVICE_PORT', 3001);
   }
 
+  get userServiceUrl(): string {
+    return this.getServiceUrl('USER_SERVICE_URL', this.userPort);
+  }
+
   get examPort(): number {
     return this.getNumber('EXAM_SERVICE_PORT', 3002);
+  }
+
+  get examServiceUrl(): string {
+    return this.getServiceUrl('EXAM_SERVICE_URL', this.examPort);
   }
 
   get answerPort(): number {
     return this.getNumber('ANSWER_SERVICE_PORT', 3003);
   }
 
+  get answerServiceUrl(): string {
+    return this.getServiceUrl('ANSWER_SERVICE_URL', this.answerPort);
+  }
+
   get analysePort(): number {
     return this.getNumber('ANALYSE_SERVICE_PORT', 3004);
+  }
+
+  get analyseServiceUrl(): string {
+    return this.getServiceUrl('ANALYSE_SERVICE_URL', this.analysePort);
   }
 
   get examTcpPort(): number {
@@ -109,5 +125,9 @@ export class AppConfigService {
     }
 
     return parsed;
+  }
+
+  private getServiceUrl(key: string, port: number): string {
+    return this.getString(key, `http://localhost:${port}`);
   }
 }

@@ -25,6 +25,7 @@ export class ApiError extends Error {
 }
 
 const instance = axios.create({
+  baseURL: '/api',
   timeout: 15000,
 })
 

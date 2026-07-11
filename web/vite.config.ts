@@ -4,38 +4,16 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const target = (port: string | undefined, fallback: number) =>
-    `http://localhost:${port ?? fallback}`
+  const appPort = env.APP_PORT ?? 3000
 
   return {
     plugins: [react()],
     server: {
-      // Development proxy: frontend keeps /service/path, backend receives /path.
+      // Frontend only knows the API Gateway. The gateway routes to services.
       proxy: {
-        '/user': {
-          target: target(env.USER_SERVICE_PORT, 3001),
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/user/, ''),
-        },
-        '^/exam/(add|list|find|answer|delete|save|publish|unpublish)(/|$)': {
-          target: target(env.EXAM_SERVICE_PORT, 3002),
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/exam/, ''),
-        },
-        '/answer': {
-          target: target(env.ANSWER_SERVICE_PORT, 3003),
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/answer/, ''),
-        },
-        '/analyse': {
-          target: target(env.ANALYSE_SERVICE_PORT, 3004),
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/analyse/, ''),
-        },
         '/api': {
-          target: target(env.APP_PORT, 3000),
+          target: `http://localhost:${appPort}`,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
         },
       },
     },
