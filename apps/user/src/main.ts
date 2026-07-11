@@ -1,8 +1,8 @@
-import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { UserModule } from './user.module';
 import { ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from '@app/common';
+import { AppConfigService } from '@app/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(UserModule);
@@ -14,6 +14,7 @@ async function bootstrap() {
   );
   setupSwagger(app, 'User Service');
 
-  await app.listen(3001);
+  const config = app.get(AppConfigService);
+  await app.listen(config.userPort);
 }
 bootstrap();

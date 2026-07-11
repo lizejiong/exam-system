@@ -4,6 +4,7 @@ import { AnswerService } from './answer.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, CommonModule } from '@app/common';
+import { AppConfigModule, AppConfigService } from '@app/config';
 import { PrismaModule } from '@app/prisma';
 import { ExcelModule } from '@app/excel';
 import { RedisModule } from '@app/redis';
@@ -13,13 +14,17 @@ import { RedisModule } from '@app/redis';
     PrismaModule,
     CommonModule,
     RedisModule,
-    ClientsModule.register([
+    ClientsModule.registerAsync([
       {
         name: 'EXAM_SERVICE',
-        transport: Transport.TCP,
-        options: {
-          port: 8888,
-        },
+        imports: [AppConfigModule],
+        inject: [AppConfigService],
+        useFactory: (config: AppConfigService) => ({
+          transport: Transport.TCP,
+          options: {
+            port: config.examTcpPort,
+          },
+        }),
       },
     ]),
     ExcelModule,

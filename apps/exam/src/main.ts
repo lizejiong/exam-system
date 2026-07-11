@@ -1,9 +1,9 @@
-import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { ExamModule } from './exam.module';
 import { Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
 import { setupSwagger } from '@app/common';
+import { AppConfigService } from '@app/config';
 
 async function bootstrap() {
   const app = await NestFactory.create(ExamModule);
@@ -14,15 +14,16 @@ async function bootstrap() {
     }),
   );
   setupSwagger(app, 'Exam Service');
+  const config = app.get(AppConfigService);
 
   app.connectMicroservice({
     transport: Transport.TCP,
     options: {
-      port: 8888,
+      port: config.examTcpPort,
     },
   });
   await app.startAllMicroservices();
 
-  await app.listen(3002);
+  await app.listen(config.examPort);
 }
 bootstrap();

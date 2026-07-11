@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/microservices": "^11.1.27",
@@ -88,6 +89,7 @@
     ],
     "moduleNameMapper": {
       "^@app/common(|/.*)$": "<rootDir>/libs/common/src/$1",
+      "^@app/config(|/.*)$": "<rootDir>/libs/config/src/$1",
       "^@app/email(|/.*)$": "<rootDir>/libs/email/src/$1",
       "^@app/excel(|/.*)$": "<rootDir>/libs/excel/src/$1",
       "^@app/prisma(|/.*)$": "<rootDir>/libs/prisma/src/$1",

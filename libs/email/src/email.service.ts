@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { AppConfigService } from '@app/config';
 import { createTransport } from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
@@ -12,19 +13,18 @@ export class EmailService {
 
   private readonly fromAddress: string;
 
-  constructor() {
-    const port = Number(process.env.SMTP_PORT ?? 587);
-    const user = process.env.SMTP_USER ?? '';
+  constructor(config: AppConfigService) {
+    const user = config.smtpUser;
 
-    this.fromAddress = process.env.SMTP_FROM ?? user;
+    this.fromAddress = config.smtpFrom;
 
     const transportOptions: SMTPTransport.Options = {
-      host: process.env.SMTP_HOST ?? 'smtp.qq.com',
-      port,
-      secure: port === 465,
+      host: config.smtpHost,
+      port: config.smtpPort,
+      secure: config.smtpSecure,
       auth: {
         user,
-        pass: process.env.SMTP_PASS ?? '',
+        pass: config.smtpPass,
       },
     };
 

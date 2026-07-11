@@ -31,6 +31,26 @@
 $ pnpm install
 ```
 
+## Environment
+
+Copy `.env.example` to `.env`, then adjust the values for your local machine.
+
+Required local services:
+
+- MySQL: used by Prisma through `DATABASE_URL`
+- Redis: used by captcha and exam ranking
+- SMTP: used by email verification code
+
+Important variables:
+
+- `DATABASE_URL`: MySQL connection string
+- `JWT_SECRET`: JWT signing secret
+- `JWT_EXPIRES_IN`: JWT expiration, for example `30m` or `7d`
+- `REDIS_HOST` / `REDIS_PORT`: Redis connection
+- `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM`: email sender
+- `USER_SERVICE_PORT` / `EXAM_SERVICE_PORT` / `ANSWER_SERVICE_PORT` / `ANALYSE_SERVICE_PORT`: backend HTTP ports
+- `EXAM_TCP_PORT`: Exam microservice TCP port used by the answer service
+
 ## Compile and run the project
 
 ```bash
