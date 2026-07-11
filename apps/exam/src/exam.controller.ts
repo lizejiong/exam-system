@@ -11,7 +11,10 @@ import { ExamService } from './exam.service';
 import { RequireLogin, UserInfo } from '@app/common';
 import { ExamAddDto } from './dto/exam-add.dto';
 import { ExamSaveDto } from './dto/exam-save.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('exam')
+@ApiBearerAuth()
 @Controller()
 export class ExamController {
   constructor(private readonly examService: ExamService) {}

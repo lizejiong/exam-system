@@ -13,7 +13,10 @@ import { RequireLogin, UserInfo } from '@app/common';
 import { AnswerAddDto } from './dto/answer-add.dto';
 import { ExcelService } from '@app/excel';
 import { AnswerSubmitDto } from './dto/answer-submit.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('answer')
+@ApiBearerAuth()
 @Controller()
 export class AnswerController {
   @Inject(ExcelService)

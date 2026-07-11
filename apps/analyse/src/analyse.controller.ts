@@ -1,7 +1,10 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { AnalyseService } from './analyse.service';
 import { RequireLogin, UserInfo } from '@app/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('analyse')
+@ApiBearerAuth()
 @Controller()
 export class AnalyseController {
   constructor(private readonly analyseService: AnalyseService) {}

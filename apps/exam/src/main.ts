@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { ExamModule } from './exam.module';
 import { Transport } from '@nestjs/microservices';
 import { ValidationPipe } from '@nestjs/common';
+import { setupSwagger } from '@app/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(ExamModule);
@@ -12,6 +13,7 @@ async function bootstrap() {
       transform: true,
     }),
   );
+  setupSwagger(app, 'Exam Service');
 
   app.connectMicroservice({
     transport: Transport.TCP,
