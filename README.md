@@ -41,6 +41,25 @@ Required local services:
 - Redis: used by captcha and exam ranking
 - SMTP: used by email verification code
 
+For local development, you can start MySQL and Redis with Docker:
+
+```bash
+pnpm dev:infra
+```
+
+Then initialize Prisma:
+
+```bash
+pnpm prisma:generate
+pnpm prisma:migrate -- --name init
+pnpm prisma:seed
+```
+
+Seed users:
+
+- `admin` / `123456`
+- `student` / `123456`
+
 Important variables:
 
 - `DATABASE_URL`: MySQL connection string
@@ -54,6 +73,16 @@ Important variables:
 ## Compile and run the project
 
 ```bash
+# start all backend services and frontend
+$ pnpm dev:all
+
+# start a single service
+$ pnpm dev:user
+$ pnpm dev:exam
+$ pnpm dev:answer
+$ pnpm dev:analyse
+$ pnpm dev:web
+
 # development
 $ pnpm run start
 
