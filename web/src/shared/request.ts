@@ -1,8 +1,22 @@
 import axios, { type AxiosError, type AxiosResponse } from 'axios'
 import { clearAuth, getToken, setToken } from './auth'
 
+interface ApiEnvelope<T> {
+  code: number
+  message: string
+  data: T
+}
+
+interface ApiErrorEnvelope {
+  code?: number
+  message?: string | string[]
+  path?: string
+  timestamp?: string
+}
+
 export class ApiError extends Error {
   status: number
+
   constructor(status: number, message: string) {
     super(message)
     this.name = 'ApiError'
@@ -14,7 +28,6 @@ const instance = axios.create({
   timeout: 15000,
 })
 
-// 请求拦截器：注入 token
 instance.interceptors.request.use((config) => {
   const token = getToken()
   if (token) {
@@ -23,26 +36,53 @@ instance.interceptors.request.use((config) => {
   return config
 })
 
-// 响应拦截器：续期 token、401 跳转、错误提取；直接返回 data
 instance.interceptors.response.use(
-  (response: AxiosResponse) => {
-    // 后端 AuthGuard 验证通过后会在响应头续期 token
+  (response: AxiosResponse): any => {
     const newToken = response.headers['token']
     if (typeof newToken === 'string') setToken(newToken)
-    return response.data
+
+    const body = response.data as ApiEnvelope<unknown> | unknown
+    if (isApiEnvelope(body)) {
+      if (body.code !== 0) {
+        return Promise.reject(
+          new ApiError(response.status, normalizeMessage(body.message) ?? '请求失败'),
+        )
+      }
+      return body.data
+    }
+
+    return body
   },
-  (error: AxiosError<{ message?: string }>) => {
+  (error: AxiosError<ApiErrorEnvelope>) => {
     const status = error.response?.status ?? 0
     if (status === 401) {
       clearAuth()
       if (location.pathname !== '/login') location.href = '/login'
     }
-    const msg = error.response?.data?.message ?? error.message ?? '请求失败'
+
+    const msg =
+      normalizeMessage(error.response?.data?.message) ??
+      error.message ??
+      '请求失败'
     return Promise.reject(new ApiError(status, msg))
   },
 )
 
-// 拦截器已把 response.data 透出，故双泛型 R = T，调用方直接拿到业务数据
+function isApiEnvelope(value: unknown): value is ApiEnvelope<unknown> {
+  return (
+    !!value &&
+    typeof value === 'object' &&
+    'code' in value &&
+    'message' in value &&
+    'data' in value
+  )
+}
+
+function normalizeMessage(message: string | string[] | undefined) {
+  if (Array.isArray(message)) return message.join('; ')
+  return message
+}
+
 export const http = {
   get: <T>(url: string, params?: Record<string, unknown>) =>
     instance.get<T, T>(url, { params }),
