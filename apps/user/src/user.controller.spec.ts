@@ -1,22 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
+jest.mock('@app/prisma', () => ({
+  PrismaService: class PrismaService {},
+}));
+
 import { UserController } from './user.controller';
-import { UserService } from './user.service';
 
 describe('UserController', () => {
-  let userController: UserController;
+  it('requests register captcha through UserService', async () => {
+    const userService = {
+      generateCaptcha: jest.fn().mockResolvedValue('123456'),
+    };
+    const controller = new UserController(userService as never);
 
-  beforeEach(async () => {
-    const app: TestingModule = await Test.createTestingModule({
-      controllers: [UserController],
-      providers: [UserService],
-    }).compile();
+    const result = await controller.getRegisterCaptcha('user@example.com');
 
-    userController = app.get<UserController>(UserController);
-  });
-
-  describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(userController.getHello()).toBe('Hello World!');
-    });
+    expect(userService.generateCaptcha).toHaveBeenCalledWith(
+      'user@example.com',
+    );
+    expect(typeof result).toBe('string');
   });
 });

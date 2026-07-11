@@ -8,7 +8,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { EmailService } from '@app/email';
+import { NotificationService } from '@app/notification';
 import { LoginUserDto } from './dto/login-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto';
@@ -18,7 +18,7 @@ export class UserService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly redisService: RedisService,
-    private readonly emailService: EmailService,
+    private readonly notificationService: NotificationService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -67,8 +67,8 @@ export class UserService {
 
   async generateCaptcha(address: string) {
     const captcha = Math.random().toString(36).substring(2, 8);
-    this.redisService.set(`captcha_${address}`, captcha, 300);
-    await this.emailService.sendMail({
+    await this.redisService.set(`captcha_${address}`, captcha, 300);
+    await this.notificationService.sendEmail({
       to: address,
       subject: '注册验证码',
       html: `<p>你的注册验证码是 ${captcha}</p>`,
@@ -89,7 +89,7 @@ export class UserService {
       10 * 60,
     );
 
-    await this.emailService.sendMail({
+    await this.notificationService.sendEmail({
       to: address,
       subject: '更改密码验证码',
       html: `<p>你的更改密码验证码是 ${code}</p>`,

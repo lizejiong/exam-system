@@ -46,6 +46,12 @@
       "@app/excel/*": [
         "libs/excel/src/*"
       ],
+      "@app/notification": [
+        "libs/notification/src"
+      ],
+      "@app/notification/*": [
+        "libs/notification/src/*"
+      ],
       "@app/prisma": [
         "libs/prisma/src"
       ],

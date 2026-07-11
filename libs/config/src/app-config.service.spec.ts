@@ -34,6 +34,13 @@ describe('AppConfigService', () => {
     expect(service.smtpSecure).toBe(true);
   });
 
+  it('uses RabbitMQ defaults for local async messages', () => {
+    const service = createService({});
+
+    expect(service.rabbitmqUrl).toBe('amqp://localhost:5672');
+    expect(service.emailQueue).toBe('email_queue');
+  });
+
   it('requires DATABASE_URL before Prisma starts', () => {
     const service = createService({});
 

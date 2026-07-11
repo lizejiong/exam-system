@@ -25,6 +25,14 @@ export class AppConfigService {
     return this.getNumber('REDIS_PORT', 6379);
   }
 
+  get rabbitmqUrl(): string {
+    return this.getString('RABBITMQ_URL', 'amqp://localhost:5672');
+  }
+
+  get emailQueue(): string {
+    return this.getString('EMAIL_QUEUE', 'email_queue');
+  }
+
   get smtpHost(): string {
     return this.getString('SMTP_HOST', 'smtp.qq.com');
   }

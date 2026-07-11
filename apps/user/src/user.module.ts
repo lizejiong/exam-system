@@ -3,12 +3,12 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { RedisModule } from '@app/redis';
 import { PrismaModule } from '@app/prisma';
-import { EmailModule } from '@app/email';
+import { NotificationModule } from '@app/notification';
 import { AuthGuard, CommonModule } from '@app/common';
 import { APP_GUARD } from '@nestjs/core';
 
 @Module({
-  imports: [RedisModule, PrismaModule, EmailModule, CommonModule],
+  imports: [RedisModule, PrismaModule, NotificationModule, CommonModule],
   controllers: [UserController],
   providers: [
     UserService,

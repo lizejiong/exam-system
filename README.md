@@ -39,13 +39,20 @@ Required local services:
 
 - MySQL: used by Prisma through `DATABASE_URL`
 - Redis: used by captcha and exam ranking
+- RabbitMQ: used by async notification messages
 - SMTP: used by email verification code
 
-For local development, you can start MySQL and Redis with Docker:
+For local development, you can start MySQL, Redis, and RabbitMQ with Docker:
 
 ```bash
 pnpm dev:infra
 ```
+
+RabbitMQ management UI:
+
+- URL: `http://localhost:15672`
+- Username: `guest`
+- Password: `guest`
 
 Then initialize Prisma:
 
@@ -66,9 +73,17 @@ Important variables:
 - `JWT_SECRET`: JWT signing secret
 - `JWT_EXPIRES_IN`: JWT expiration, for example `30m` or `7d`
 - `REDIS_HOST` / `REDIS_PORT`: Redis connection
+- `RABBITMQ_URL`: RabbitMQ connection string
+- `EMAIL_QUEUE`: RabbitMQ queue used by async email messages
 - `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM`: email sender
 - `USER_SERVICE_PORT` / `EXAM_SERVICE_PORT` / `ANSWER_SERVICE_PORT` / `ANALYSE_SERVICE_PORT`: backend HTTP ports
 - `EXAM_TCP_PORT`: Exam microservice TCP port used by the answer service
+
+Async email flow:
+
+```txt
+user service -> RabbitMQ email_queue -> notification service -> SMTP
+```
 
 ## Compile and run the project
 
@@ -81,6 +96,7 @@ $ pnpm dev:user
 $ pnpm dev:exam
 $ pnpm dev:answer
 $ pnpm dev:analyse
+$ pnpm dev:notification
 $ pnpm dev:web
 
 # development
