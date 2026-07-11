@@ -35,7 +35,7 @@ export default function ExamPage() {
       const exam = await examApi.add({ name: examName })
       setName('')
       await load()
-      navigate(`/exam/${exam.id}/edit`, { state: { exam } })
+      navigate(`/paper/${exam.id}/edit`, { state: { exam } })
     } catch (e) {
       setMsg(e instanceof Error ? e.message : '创建失败')
     } finally {
@@ -58,6 +58,17 @@ export default function ExamPage() {
       setMsg(`${actionText}成功`)
     } catch (e) {
       setMsg(e instanceof Error ? e.message : `${actionText}失败`)
+    }
+  }
+
+  const onShare = async (exam: Exam) => {
+    const link = `${window.location.origin}/paper/${exam.id}/answer`
+
+    try {
+      await navigator.clipboard.writeText(link)
+      setMsg('答题链接已复制，可以发给其他用户')
+    } catch {
+      setMsg(`复制失败，请手动复制：${link}`)
     }
   }
 
@@ -129,10 +140,23 @@ export default function ExamPage() {
                 <button
                   type="button"
                   onClick={() =>
-                    navigate(`/exam/${exam.id}/edit`, { state: { exam } })
+                    navigate(`/paper/${exam.id}/edit`, { state: { exam } })
                   }
                 >
                   编辑
+                </button>
+                <button
+                  type="button"
+                  disabled={!exam.isPublish}
+                  onClick={() => onShare(exam)}
+                >
+                  分享链接
+                </button>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/paper/${exam.id}/analyse`)}
+                >
+                  分析
                 </button>
                 <button type="button" onClick={() => onTogglePublish(exam)}>
                   {exam.isPublish ? '取消发布' : '发布'}

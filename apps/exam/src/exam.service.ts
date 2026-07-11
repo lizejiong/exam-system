@@ -1,7 +1,14 @@
 import { PrismaService } from '@app/prisma';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { ExamAddDto } from './dto/exam-add.dto';
 import { ExamSaveDto } from './dto/exam-save.dto';
+
+type AnswerExamQuestion = {
+  type: 'radio' | 'checkbox' | 'blank';
+  question: string;
+  options: string[];
+  score: number;
+};
 
 @Injectable()
 export class ExamService {
@@ -97,5 +104,55 @@ export class ExamService {
         isDelete: false,
       },
     });
+  }
+
+  async answer(id: number) {
+    const exam = await this.prismaService.exam.findFirst({
+      where: {
+        id,
+        isDelete: false,
+        isPublish: true,
+      },
+    });
+
+    if (!exam) {
+      throw new NotFoundException('Exam does not exist or is not published');
+    }
+
+    return {
+      ...exam,
+      content: JSON.stringify(this.toAnswerQuestions(exam.content)),
+    };
+  }
+
+  private toAnswerQuestions(content: string): AnswerExamQuestion[] {
+    if (!content.trim()) return [];
+
+    try {
+      const parsed = JSON.parse(content) as unknown;
+      if (!Array.isArray(parsed)) return [];
+
+      return parsed
+        .filter((item): item is AnswerExamQuestion => {
+          if (!item || typeof item !== 'object') return false;
+          const question = item as Partial<AnswerExamQuestion>;
+          return (
+            (question.type === 'radio' ||
+              question.type === 'checkbox' ||
+              question.type === 'blank') &&
+            typeof question.question === 'string' &&
+            Array.isArray(question.options) &&
+            typeof question.score === 'number'
+          );
+        })
+        .map((question) => ({
+          type: question.type,
+          question: question.question,
+          options: question.options,
+          score: question.score,
+        }));
+    } catch {
+      return [];
+    }
   }
 }

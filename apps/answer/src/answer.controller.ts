@@ -12,6 +12,7 @@ import { AnswerService } from './answer.service';
 import { RequireLogin, UserInfo } from '@app/common';
 import { AnswerAddDto } from './dto/answer-add.dto';
 import { ExcelService } from '@app/excel';
+import { AnswerSubmitDto } from './dto/answer-submit.dto';
 
 @Controller()
 export class AnswerController {
@@ -24,6 +25,24 @@ export class AnswerController {
   @RequireLogin()
   async add(@Body() addDto: AnswerAddDto, @UserInfo('userId') userId: number) {
     return this.answerService.add(addDto, userId);
+  }
+
+  @Post('submit')
+  @RequireLogin()
+  async submit(
+    @Body() submitDto: AnswerSubmitDto,
+    @UserInfo('userId') userId: number,
+  ) {
+    return this.answerService.submit(submitDto, userId);
+  }
+
+  @Get('analyse/:examId')
+  @RequireLogin()
+  async analyse(
+    @Param('examId') examId: string,
+    @UserInfo('userId') userId: number,
+  ) {
+    return this.answerService.analyse(+examId, userId);
   }
 
   @Get('list')
@@ -42,6 +61,7 @@ export class AnswerController {
   }
 
   @Get('export')
+  @RequireLogin()
   async export(@Query('examId') examId: string) {
     if (!examId) {
       throw new BadRequestException('examId 不能为空');

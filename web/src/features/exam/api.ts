@@ -1,5 +1,12 @@
 import { http } from '../../shared/request'
-import type { Exam, ExamAddParams, ExamSaveParams } from './types'
+import type {
+  AnswerAnalyseResult,
+  AnswerSubmitParams,
+  AnswerSubmitResult,
+  Exam,
+  ExamAddParams,
+  ExamSaveParams,
+} from './types'
 
 export const examApi = {
   list: (bin?: string) =>
@@ -9,6 +16,8 @@ export const examApi = {
 
   find: (id: number) => http.get<Exam>(`/exam/find/${id}`),
 
+  answer: (id: number) => http.get<Exam>(`/exam/answer/${id}`),
+
   remove: (id: number) => http.delete<void>(`/exam/delete/${id}`),
 
   save: (data: ExamSaveParams) => http.post<Exam>('/exam/save', data),
@@ -16,4 +25,12 @@ export const examApi = {
   publish: (id: number) => http.get<void>(`/exam/publish/${id}`),
 
   unpublish: (id: number) => http.get<void>(`/exam/unpublish/${id}`),
+}
+
+export const answerApi = {
+  submit: (data: AnswerSubmitParams) =>
+    http.post<AnswerSubmitResult>('/answer/submit', data),
+
+  analyse: (examId: number) =>
+    http.get<AnswerAnalyseResult>(`/answer/analyse/${examId}`),
 }

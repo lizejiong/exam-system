@@ -45,6 +45,9 @@ model Answer {
   id  Int @id @default(autoincrement())
   content String @db.Text 
   score Int
+  totalScore Int @default(0)
+  detail String @db.Text
+  examSnapshot String @db.Text
   createTime DateTime @default(now())
   updateTime DateTime @updatedAt
 

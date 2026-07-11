@@ -52,6 +52,12 @@ export class ExamController {
     return this.examService.unpublish(userId, +id);
   }
 
+  @Get('answer/:id')
+  @RequireLogin()
+  async answer(@Param('id') id: string) {
+    return this.examService.answer(+id);
+  }
+
   @Get('find/:id')
   @RequireLogin()
   async find(@UserInfo('userId') userId: number, @Param('id') id: string) {

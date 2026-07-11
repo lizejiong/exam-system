@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { userApi } from '../api'
 import { setToken, setUser } from '../../../shared/auth'
 
@@ -7,6 +7,20 @@ type AuthMode = 'login' | 'register' | 'resetPassword'
 
 export default function LoginPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const from = (
+    location.state as
+      | {
+          from?: {
+            pathname?: string
+            search?: string
+          }
+        }
+      | null
+  )?.from
+  const redirectPath = from?.pathname
+    ? `${from.pathname}${from.search ?? ''}`
+    : '/'
   const [mode, setMode] = useState<AuthMode>('login')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -52,7 +66,7 @@ export default function LoginPage() {
         const { user, token } = await userApi.login({ username, password })
         setToken(token)
         setUser(user)
-        navigate('/')
+        navigate(redirectPath, { replace: true })
         return
       }
 

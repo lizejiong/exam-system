@@ -15,7 +15,7 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/user/, ''),
       },
-      '/exam': {
+      '^/exam/(add|list|find|answer|delete|save|publish|unpublish)(/|$)': {
         target: 'http://localhost:3002',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/exam/, ''),
