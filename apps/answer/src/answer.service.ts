@@ -1,4 +1,5 @@
 import { PrismaService } from '@app/prisma';
+import { RedisService } from '@app/redis';
 import {
   BadRequestException,
   ForbiddenException,
@@ -19,6 +20,9 @@ import {
 export class AnswerService {
   @Inject(PrismaService)
   private prismaService: PrismaService;
+
+  @Inject(RedisService)
+  private redisService: RedisService;
 
   async add(dto: AnswerAddDto, userId: number) {
     let answers: AnswerContent;
@@ -74,6 +78,15 @@ export class AnswerService {
         exam: true,
         answerer: true,
       },
+    });
+    await this.updateRanking({
+      examId: answer.examId,
+      userId,
+      username: answer.answerer.username,
+      score: answer.score,
+      totalScore: answer.totalScore,
+      answerId: answer.id,
+      createTime: answer.createTime.toISOString(),
     });
 
     return {
@@ -218,5 +231,41 @@ export class AnswerService {
     } catch {
       return [];
     }
+  }
+
+  private async updateRanking(data: {
+    examId: number;
+    userId: number;
+    username: string;
+    score: number;
+    totalScore: number;
+    answerId: number;
+    createTime: string;
+  }) {
+    const rankingKey = this.getRankingKey(data.examId);
+    const member = String(data.userId);
+    const previousScore = await this.redisService.zScore(rankingKey, member);
+
+    if (previousScore !== null && previousScore >= data.score) {
+      return;
+    }
+
+    await this.redisService.zAdd(rankingKey, member, data.score);
+    await this.redisService.hSet(this.getRankingUserKey(data.examId, data.userId), {
+      userId: data.userId,
+      username: data.username,
+      score: data.score,
+      totalScore: data.totalScore,
+      answerId: data.answerId,
+      createTime: data.createTime,
+    });
+  }
+
+  private getRankingKey(examId: number) {
+    return `exam:${examId}:ranking`;
+  }
+
+  private getRankingUserKey(examId: number, userId: number) {
+    return `exam:${examId}:ranking:user:${userId}`;
   }
 }

@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { answerApi } from '../api'
-import type { AnswerAnalyseResult } from '../types'
+import { analyseApi, answerApi } from '../api'
+import type { AnswerAnalyseResult, ExamRankingResult } from '../types'
 
 export default function ExamAnalysePage() {
   const { id } = useParams()
   const navigate = useNavigate()
   const [data, setData] = useState<AnswerAnalyseResult | null>(null)
+  const [ranking, setRanking] = useState<ExamRankingResult | null>(null)
   const [loading, setLoading] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -19,9 +20,11 @@ export default function ExamAnalysePage() {
 
     setLoading(true)
     setMsg('')
-    answerApi
-      .analyse(examId)
-      .then(setData)
+    Promise.all([answerApi.analyse(examId), analyseApi.ranking(examId)])
+      .then(([analyseData, rankingData]) => {
+        setData(analyseData)
+        setRanking(rankingData)
+      })
       .catch((e) => {
         setMsg(e instanceof Error ? e.message : '加载分析失败')
       })
@@ -38,7 +41,7 @@ export default function ExamAnalysePage() {
         </button>
         <div>
           <h1>{data?.exam.name ?? '考试分析'}</h1>
-          <p>{loading ? '正在加载分析数据...' : '查看成绩和题目正确率。'}</p>
+          <p>{loading ? '正在加载分析数据...' : '查看成绩、题目正确率和排行榜。'}</p>
         </div>
       </header>
 
@@ -65,6 +68,30 @@ export default function ExamAnalysePage() {
               <span>最低分</span>
               <strong>{data.minScore}</strong>
             </div>
+          </section>
+
+          <section className="analyse-panel">
+            <h2>排行榜</h2>
+            {!ranking || ranking.list.length === 0 ? (
+              <div className="empty">暂无排行数据，提交答卷后会自动生成。</div>
+            ) : (
+              <div className="ranking-list">
+                {ranking.list.map((item) => (
+                  <div className="ranking-row" key={item.userId}>
+                    <strong>{item.rank}</strong>
+                    <span>{item.username}</span>
+                    <em>
+                      {item.score} / {item.totalScore}
+                    </em>
+                    <time>
+                      {item.createTime
+                        ? new Date(item.createTime).toLocaleString()
+                        : '-'}
+                    </time>
+                  </div>
+                ))}
+              </div>
+            )}
           </section>
 
           <section className="analyse-panel">

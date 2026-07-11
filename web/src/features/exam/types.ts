@@ -105,3 +105,19 @@ export interface AnswerAnalyseResult {
     correctRate: number
   }>
 }
+
+export interface ExamRankingResult {
+  exam: {
+    id: number
+    name: string
+  }
+  list: Array<{
+    rank: number
+    userId: number
+    username: string
+    score: number
+    totalScore: number
+    answerId: number
+    createTime: string
+  }>
+}

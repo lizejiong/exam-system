@@ -984,6 +984,49 @@ select:focus {
   color: var(--text-light);
 }
 
+.ranking-list {
+  display: grid;
+  gap: 10px;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: 48px minmax(120px, 1fr) 120px 190px;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: linear-gradient(180deg, #fff, #f8fafc);
+}
+
+.ranking-row strong {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: #eff6ff;
+  color: var(--primary);
+}
+
+.ranking-row span {
+  font-weight: 700;
+}
+
+.ranking-row em {
+  color: #0f766e;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.ranking-row time {
+  color: var(--text-light);
+  font-size: 13px;
+  text-align: right;
+}
+
 .records-table {
   width: 100%;
   border-collapse: collapse;
@@ -1043,6 +1086,15 @@ select:focus {
 
   .question-stat {
     grid-template-columns: 1fr;
+  }
+
+  .ranking-row {
+    grid-template-columns: 42px 1fr;
+  }
+
+  .ranking-row time {
+    grid-column: 2;
+    text-align: left;
   }
 }
 

@@ -5,6 +5,7 @@ import type {
   AnswerSubmitResult,
   Exam,
   ExamAddParams,
+  ExamRankingResult,
   ExamSaveParams,
 } from './types'
 
@@ -33,4 +34,9 @@ export const answerApi = {
 
   analyse: (examId: number) =>
     http.get<AnswerAnalyseResult>(`/answer/analyse/${examId}`),
+}
+
+export const analyseApi = {
+  ranking: (examId: number, limit = 10) =>
+    http.get<ExamRankingResult>(`/analyse/ranking/${examId}`, { limit }),
 }
